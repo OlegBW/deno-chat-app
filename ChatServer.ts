@@ -1,4 +1,5 @@
 import { Context } from "@oak/oak";
+import { kv } from './kv.ts';
 
 type WebSocketWithUsername = WebSocket & { username: string };
 type AppEvent = { event: string;[key: string]: unknown };
@@ -33,6 +34,10 @@ export default class ChatServer {
         if (data.event !== "send-message") {
             return;
         }
+
+        const id = crypto.randomUUID();
+
+        kv.set(['messages', id], message)
 
         this.broadcast({
             event: "send-message",
